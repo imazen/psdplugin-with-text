@@ -1,4 +1,4 @@
-ï»¿/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2006, Frank Blumenberg
 // 
 // See License.txt for complete licensing and attribution information.
@@ -84,7 +84,7 @@ namespace PhotoshopFile
     JumpToXPEP = 1052, //2 bytes major version, 2 bytes minor version,
     //4 bytes count. Following is repeated for count: 4 bytes block size,
     //4 bytes key, if key = 'jtDd' then next is a Boolean for the dirty flag
-    //otherwise it's a 4 byte entry for the mod date
+    //otherwise it’s a 4 byte entry for the mod date
     AlphaIdentifiers = 1053, //4 bytes of length, followed by 4 bytes each for every alpha identifier.
     URLList = 1054, //4 byte count of URLs, followed by 4 byte long, 4 byte ID, and unicode string for each count.
     VersionInfo = 1057, //4 byte version, 1 byte HasRealMergedData, unicode string of writer name, unicode string of reader name, 4 bytes of file version.

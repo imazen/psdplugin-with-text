@@ -1,4 +1,4 @@
-ï»¿/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 // Copyright (C) 2006, Frank Blumenberg
 // 
 // See License.txt for complete licensing and attribution information.
@@ -37,6 +37,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Threading;
+using PhotoshopFile.Text;
 
 namespace PhotoshopFile
 {
@@ -529,6 +530,7 @@ namespace PhotoshopFile
         }
       }
 
+
       ///////////////////////////////////////////////////////////////////////////
 
     }
@@ -592,29 +594,32 @@ namespace PhotoshopFile
 
     public class AdjustmentLayerInfo
     {
-      private Layer m_layer;
+        protected Layer m_layer;
       /// <summary>
       /// The layer to which this info belongs
       /// </summary>
-      internal Layer Layer
+      public Layer Layer
       {
         get { return m_layer; }
       }
 
-      private string m_key;
+      protected string m_key;
       public string Key
       {
         get { return m_key; }
         set { m_key = value; }
       }
 
-      private byte[] m_data;
+      protected byte[] m_data;
       public byte[] Data
       {
         get { return m_data; }
         set { m_data = value; }
       }
 
+      protected AdjustmentLayerInfo()
+      {
+      }
       public AdjustmentLayerInfo(string key, Layer layer)
       {
         m_key = key;
@@ -639,6 +644,8 @@ namespace PhotoshopFile
         uint dataLength = reader.ReadUInt32();
         m_data = reader.ReadBytes((int)dataLength);
       }
+
+
 
       public void Save(BinaryReverseWriter writer)
       {
@@ -790,7 +797,7 @@ namespace PhotoshopFile
 
     private bool m_clipping;
     /// <summary>
-    /// false = base, true = non-base
+    /// false = base, true = non–base
     /// </summary>
     public bool Clipping
     {
@@ -939,7 +946,13 @@ namespace PhotoshopFile
       {
         try
         {
-          m_adjustmentInfo.Add(new AdjustmentLayerInfo(reader, this));
+            AdjustmentLayerInfo ali = new AdjustmentLayerInfo(reader, this);
+            if (ali.Key.Equals("lrFX"))
+            {
+                //A sub-key - we want to merge its sub-layer info items with this dict.
+                m_adjustmentInfo.AddRange(new Effects(ali)._resources.Values);
+            } else 
+                m_adjustmentInfo.Add(ali); // Just add the items
         }
         catch
         {
@@ -956,7 +969,7 @@ namespace PhotoshopFile
 
     ///////////////////////////////////////////////////////////////////////////
 
-    public void PrepareSave(PaintDotNet.Threading.PrivateThreadPool threadPool)
+    public void PrepareSave(PrivateThreadPool threadPool)
     {
       foreach (Channel ch in m_channels)
       {
